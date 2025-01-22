@@ -1,0 +1,41 @@
+from sympy import Or, Not, symbols, simplify_logic
+
+def resolution(clause1, clause2):
+    resolvents = set()
+    for literal1 in clause1.args:
+        for literal2 in clause2.args:
+            if Not(literal1) == literal2 or literal1 == Not(literal2):
+                remaining_literals = [
+                    l for l in clause1.args if l != literal1
+                ] + [
+                    l for l in clause2.args if l != literal2
+                ]
+                if remaining_literals:
+                    resolvents.add(simplify_logic(Or(*remaining_literals)))
+                else:
+                    resolvents.add(simplify_logic(Or()))
+    return resolvents
+
+def resolve(clauses):
+    new_clauses = set()
+    for i, clause1 in enumerate(clauses):
+        for j, clause2 in enumerate(clauses):
+            if i < j:
+                new_clauses |= resolution(clause1, clause2)
+    return new_clauses
+
+if __name__ == "__main__":
+    A, B, C = symbols("A B C")
+    clause1 = Or(A, Not(B), C)
+    clause2 = Or(Not(A), B, Not(C))
+    resolvents = resolution(clause1, clause2)
+    print("Resolvents:", resolvents)
+    clauses = {Or(A, B), Or(Not(A), C), Or(Not(B), Not(C))}
+    new_clauses = clauses
+    while True:
+        old_clauses = new_clauses
+        new_clauses = resolve(old_clauses)
+        if not new_clauses.difference(clauses):
+            break
+        clauses |= new_clauses
+    print("\nSet of Clauses:", clauses)
