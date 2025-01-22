@@ -1,0 +1,45 @@
+import random
+
+class RockPaperScissors:
+    def __init__(self):
+        self.moves = ['rock', 'paper', 'scissors']
+        self.patterns = {'rock': 'scissors', 'paper': 'rock', 'scissors': 'paper'}
+
+    def play_random(self):
+        return random.choice(self.moves)
+
+    def play_pattern(self, opponent_moves):
+        if len(opponent_moves) < 2:
+            return random.choice(self.moves)
+        return self.patterns[opponent_moves[-1]]
+
+def play_game(strategy1, strategy2, rounds=10):
+    game = RockPaperScissors()
+    player1_wins, player2_wins = 0, 0
+    print(f"Player 1 ({strategy1}) vs Player 2 ({strategy2})")
+    for i in range(rounds):
+        move1 = game.play_random() if strategy1 == 'random' else game.play_pattern([])
+        move2 = game.play_random() if strategy2 == 'random' else game.play_pattern([move1])
+        print(f"Round {i+1}: Player 1 chooses {move1}, Player 2 chooses {move2}")
+        if (move1 == 'rock' and move2 == 'scissors') or \
+           (move1 == 'paper' and move2 == 'rock') or \
+           (move1 == 'scissors' and move2 == 'paper'):
+            print("Player 1 wins!")
+            player1_wins += 1
+        elif move1 == move2:
+            print("It's a tie!")
+        else:
+            print("Player 2 wins!")
+            player2_wins += 1
+    print(f"\nPlayer 1 wins: {player1_wins} rounds")
+    print(f"Player 2 wins: {player2_wins} rounds")
+    print(f"Ties: {rounds - player1_wins - player2_wins} rounds")
+
+print("\nRandom vs Random:")
+play_game('random', 'random')
+
+print("\nPattern vs Pattern:")
+play_game('pattern', 'pattern')
+
+print("\nRandom vs Pattern:")
+play_game('random', 'pattern')
