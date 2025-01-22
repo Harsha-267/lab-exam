@@ -1,0 +1,58 @@
+class MazeSolver:
+    def __init__(self, maze):
+        self.maze = maze
+
+    def forward_chaining(self, start):
+        print("Using Forward Chaining:")
+        current = start
+        while True:
+            if current == (len(self.maze) - 1, len(self.maze[0]) - 1):
+                print("Goal reached!")
+                return True
+            next_move = self.get_next_move(current)
+            if not next_move:
+                print("No more moves. Goal unreachable.")
+                return False
+            current = next_move
+
+    def backward_chaining(self, start, goal):
+        print("\nUsing Backward Chaining:")
+        if self.backtrack(start, goal):
+            print("Goal reachable!")
+        else:
+            print("Goal unreachable.")
+
+    def get_next_move(self, current):
+        x, y = current
+        if x + 1 < len(self.maze) and self.maze[x + 1][y] == 1:
+            return x + 1, y
+        elif y + 1 < len(self.maze[0]) and self.maze[x][y + 1] == 1:
+            return x, y + 1
+        else:
+            return None
+
+    def backtrack(self, current, goal):
+        if current == goal:
+            return True
+        x, y = current
+        if x < 0 or y < 0 or x >= len(self.maze) or y >= len(self.maze[0]) or self.maze[x][y] != 1:
+            return False
+        self.maze[x][y] = -1
+        if self.backtrack((x + 1, y), goal) or self.backtrack((x, y + 1), goal):
+            return True
+        return False
+
+
+if __name__ == "__main__":
+    maze = [
+        [1, 0, 1, 1],
+        [1, 1, 0, 1],
+        [0, 1, 1, 1],
+        [1, 1, 0, 1]
+    ]
+    solver = MazeSolver(maze)
+    start = (0, 0)
+    goal = (len(maze) - 1, len(maze[0]) - 1)
+
+    solver.forward_chaining(start)
+    solver.backward_chaining(start, goal)
